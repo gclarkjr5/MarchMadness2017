@@ -1,0 +1,9 @@
+body {
+    background-color: black;
+}
+body > div {
+    background-image: url(MM.png);
+    background-repeat: no-repeat;
+    background-position: right bottom;
+}
+

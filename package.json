@@ -1,0 +1,17 @@
+{
+  "name": "marchmadness2017",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Gary Clark Jr",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.2",
+    "fast-csv": "^2.4.0",
+    "lodash": "^4.17.4",
+    "socket.io": "^1.7.3"
+  }
+}

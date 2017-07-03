@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Bracket Challenge 2017</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./custom.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand active" href="http://marchmadness2017.azurewebsites.net/">Bracket Challenge</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="http://www.ncaa.com/march-madness">NCAA</a></li>
+                <li><a href="http://www.ncaa.com/interactive-bracket/basketball-men/d1">Bracket</a></li>
+                <!--<li><a id="chartInfo" href="#">Chart Info</a></li>-->
+            </ul>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div id="container"></div>
+    </div>
+    <!--<div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>The following is a key to interpret the scoring of the chart:</p>
+                    <ul>
+                        <li></li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>-->
+    <script>
+        Highcharts.theme = {
+            colors: ["#246987", "#768d99", "#a7a9ac", "#00AFD5", "#bed3e4", "#004990", "#cddc38"],
+            chart: {
+                backgroundColor: {
+                    linearGradient: [0, 0, 0, 0],
+                    stops: [
+                        [0, 'rgb(255, 255, 255)'],
+                        [1, 'rgb(240, 240, 255)']
+                    ]
+                },
+                height: 725,
+                width: 1500
+            },
+            title: {
+                style: {
+                    color: '#000',
+                    font: 'bold 24px "Trebuchet MS", Verdana, sans-serif'
+                }
+            },
+            subtitle: {
+                style: {
+                    color: '#666666',
+                    font: 'bold 16px "Trebuchet MS", Verdana, sans-serif'
+                }
+            },
+
+            legend: {
+                itemStyle: {
+                    font: '9pt Trebuchet MS, Verdana, sans-serif',
+                    color: 'black'
+                },
+                itemHoverStyle: {
+                    color: 'gray'
+                },
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle'
+            }
+        };
+        Highcharts.setOptions(Highcharts.theme);
+
+        $(document).ready(() => {
+            var socket = io();
+            socket.on(`data`, orderObjs => {
+
+                let Participants = _.map(orderObjs, x => {
+                    return x.Name
+                });
+
+                let Round64 = _.map(orderObjs, x => {
+                    return x.Round64Points
+                });
+                let Round32 = _.map(orderObjs, x => {
+                    return x.Round32Points
+                });
+                let Sweet16 = _.map(orderObjs, x => {
+                    return x.Sweet16Points
+                });
+                let Elite8 = _.map(orderObjs, x => {
+                    return x.Elite8Points
+                });
+                let Final4 = _.map(orderObjs, x => {
+                    return x.Final4Points
+                });
+                let Championship = _.map(orderObjs, x => {
+                    return x.CHAMPIONSHIPPoints
+                });
+                let MaxPtsRemain = _.map(orderObjs, x => {
+                    return x.PtsRemain
+                });
+                // console.log(MaxPtsRemain)
+
+                let series = [{
+                    name: `Round64`,
+                    data: Round64
+                }, {
+                    name: `Round32`,
+                    data: Round32
+                }, {
+                    name: `Sweet16`,
+                    data: Sweet16
+                }, {
+                    name: `Elite8`,
+                    data: Elite8
+                }, {
+                    name: `Final4`,
+                    data: Final4
+                }, {
+                    name: `CHAMPIONSHIP`,
+                    data: Championship
+                }, {
+                    name: `MaxPtsRemain`,
+                    data: MaxPtsRemain
+                }];
+                let data = {
+                    categories: Participants,
+                    series: series
+                }
+                // console.log(data)
+
+                Highcharts.chart('container', {
+                    chart: {
+                        type: 'bar',
+                        backgroundColor: `rgba(255, 255, 255, 0.1)`,
+                        animation: true
+                    },
+                    title: {
+                        text: `NCAA MEN'S BASKETBALL TOURNAMENT`,
+                        style: {
+                            color: `#ffffff`
+                        }
+                    },
+                    subtitle: {
+                        text: `MARCH MADNESS 2017`,
+                        style: {
+                            color: `#ffffff`
+                        }
+                    },
+                    xAxis: {
+                        categories: data.categories
+                    },
+                    yAxis: {
+                        min: 0,
+                        title: {
+                            text: 'POINTS'
+                        },
+                        reversedStacks: false
+                    },
+                    legend: {
+                        reversed: false,
+                        itemStyle: {
+                            color: `#ffffff`
+                        }
+                    },
+                    plotOptions: {
+                        series: {
+                            stacking: 'normal',
+                            borderColor: `#000000`,
+                            pointWidth: 12
+                        }
+                    },
+                    tooltip: {
+                        shared: false,
+                        formatter: function () {
+                            let dataObj = _.find(orderObjs, x => {
+                                return x.Name === `${this.key}`
+                            })
+                            let FinalFour = dataObj[`Final Four`].join().replace(/,/g, `, `)
+                            let Top2 = dataObj[`Top Two`].join().replace(/,/g, `, `)
+                            let Champion = dataObj[`Champion`].join().replace(/,/g, `, `)
+                            let TP = dataObj.TotalPoints
+                            let GC = dataObj.TotalCorrect
+                            // console.log(dataObj)
+                            var tooltip = `<b>${this.key}</b><br>
+                                            <b>${this.series.name}: ${this.y}<b><br>
+                                            Final Four: ${FinalFour}<br>
+                                            Top 2: ${Top2}<br>
+                                            Champion: ${Champion}<br>
+                                            Games Correct: ${GC}<br>
+                                            Total Pts: ${TP}<br>`
+                            _.forEach(dataObj, (value, key) => {
+                                if (_.includes(key, `SoFar`) == true) {
+                                    tooltip = `${tooltip}
+                                                ${key}: ${value}<br>`
+                                }
+                            })
+                            return tooltip;
+                        }
+                    },
+                    series: data.series
+                });
+            });
+            $(`#chartInfo`).on(`click`, () => {
+                $(`#myModal`).modal(`show`)
+            })
+        });
+    </script>
+</body>
+
+</html>
