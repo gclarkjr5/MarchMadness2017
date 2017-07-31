@@ -21,7 +21,7 @@
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand active" href="http://marchmadness-2017.herokuapp.com/">Bracket Challenge</a>
+                <a class="navbar-brand active" href="http://marchmadness-2017.herokuapp.com/">Bracket Challenge '17</a>
             </div>
             <ul class="nav navbar-nav">
                 <li><a href="http://www.ncaa.com/march-madness">NCAA</a></li>
@@ -33,21 +33,6 @@
     <div class="container-fluid">
         <div id="container"></div>
     </div>
-    <!--<div id="myModal" class="modal fade" role="dialog">
-        <div class="modal-dialog modal-sm">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <p>The following is a key to interpret the scoring of the chart:</p>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>-->
     <script>
         Highcharts.theme = {
             colors: ["#246987", "#768d99", "#a7a9ac", "#00AFD5", "#bed3e4", "#004990", "#cddc38"],
@@ -119,7 +104,6 @@
                 let MaxPtsRemain = _.map(orderObjs, x => {
                     return x.PtsRemain
                 });
-                // console.log(MaxPtsRemain)
 
                 let series = [{
                     name: `Round64`,
@@ -147,7 +131,6 @@
                     categories: Participants,
                     series: series
                 }
-                // console.log(data)
 
                 Highcharts.chart('container', {
                     chart: {
@@ -201,7 +184,6 @@
                             let Champion = dataObj[`Champion`].join().replace(/,/g, `, `)
                             let TP = dataObj.TotalPoints
                             let GC = dataObj.TotalCorrect
-                            // console.log(dataObj)
                             var tooltip = `<b>${this.key}</b><br>
                                             <b>${this.series.name}: ${this.y}<b><br>
                                             Final Four: ${FinalFour}<br>
@@ -221,9 +203,6 @@
                     series: data.series
                 });
             });
-            $(`#chartInfo`).on(`click`, () => {
-                $(`#myModal`).modal(`show`)
-            })
         });
     </script>
 </body>
